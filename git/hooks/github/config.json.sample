@@ -1,0 +1,12 @@
+{
+    "listen": "127.0.0.1:8090",
+    "log": "/path/to/log",
+    "hooks": {
+        "repo1": {
+            "cmd": ["/path/script.sh", "arg1", "arg2"]
+        },
+        "repo2": {
+            "cmd": ["/path/script.sh", "arg1", "arg2"]
+        }
+    }
+}
