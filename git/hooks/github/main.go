@@ -15,7 +15,7 @@ import (
 	"github.com/bmizerany/pat"
 )
 
-func HomeView(w http.ResponseWriter, r *http.Request) {
+func homeView(w http.ResponseWriter, r *http.Request) {
 	// http.Error(w, http.StatusText(404), 404)
 	fmt.Fprint(w, "Hello World!")
 }
@@ -56,7 +56,7 @@ func commitHandle(repo string, w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func HooksView(w http.ResponseWriter, r *http.Request) {
+func hooksView(w http.ResponseWriter, r *http.Request) {
 	// http.Error(w, http.StatusText(404), 404)
 	repo := r.URL.Query().Get(":repo")
 
@@ -76,7 +76,7 @@ func HooksView(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func LogView(w http.ResponseWriter, r *http.Request) {
+func logView(w http.ResponseWriter, r *http.Request) {
 	path := config.Get("log").MustString()
 	content, err := ioutil.ReadFile(path)
 	if err != nil {
@@ -86,9 +86,9 @@ func LogView(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-type ViewFunc func(http.ResponseWriter, *http.Request)
+type viewFunc func(http.ResponseWriter, *http.Request)
 
-func BasicAuth(f ViewFunc, user, passwd []byte) ViewFunc {
+func basicAuth(f viewFunc, user, passwd []byte) viewFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		basicAuthPrefix := "Basic "
 
@@ -122,6 +122,9 @@ var config = simplejson.New()
 
 func main() {
 	path := os.Getenv("CONFIG")
+	if path == "" {
+		path = "config.json"
+	}
 	content, err := ioutil.ReadFile(path)
 	config, _ = simplejson.NewJson(content)
 	listen := config.Get("listen").MustString()
@@ -130,9 +133,9 @@ func main() {
 	pass := []byte(os.Getenv("PASSWD"))
 
 	router := pat.New()
-	router.Get("/", http.HandlerFunc(HomeView))
-	router.Get("/logs", http.HandlerFunc(BasicAuth(LogView, user, pass)))
-	router.Post("/hooks/:repo", http.HandlerFunc(HooksView))
+	router.Get("/", http.HandlerFunc(homeView))
+	router.Get("/logs", http.HandlerFunc(basicAuth(logView, user, pass)))
+	router.Post("/hooks/:repo", http.HandlerFunc(hooksView))
 
 	http.Handle("/", router)
 	log.Printf("listen %s\n", listen)
