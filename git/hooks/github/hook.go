@@ -40,19 +40,32 @@ func runcmd(script string, arg ...string) (message string) {
 	return message
 }
 
-func commitHandle(repo string, w http.ResponseWriter, r *http.Request) {
-	// fmt.Fprint(w, "commit")
-	switch repo {
-	case "web":
-		go func() {
-			script, _ := config.Get("hooks").Get("web").Get("cmd").StringArray()
-			runcmd("/bin/bash", script...)
-		}()
-	case "frontend":
-		go func() {
-			script, _ := config.Get("hooks").Get("frontend").Get("cmd").StringArray()
-			runcmd("/bin/bash", script...)
-		}()
+func pushHandle(repo string, w http.ResponseWriter, r *http.Request) {
+	log.Printf("request repo: %s\n", repo)
+	for repoName, value := range config.Get("hooks").MustMap() {
+		if repo == repoName {
+			log.Printf("match repo: %s\n", repo)
+			go func() {
+				valueMap, _ := value.(map[string]interface{})
+				cmd, _ := valueMap["cmd"]
+
+				script := []string{}
+				switch vv := cmd.(type) {
+				case []interface{}:
+					for _, v := range vv {
+						s, _ := v.(string)
+						script = append(script, s)
+					}
+				case interface{}:
+					s, _ := vv.(string)
+					script = append(script, s)
+				}
+
+				log.Printf("script: %s\n", script)
+				runcmd("/bin/bash", script...)
+			}()
+			break
+		}
 	}
 }
 
@@ -67,9 +80,8 @@ func hooksView(w http.ResponseWriter, r *http.Request) {
 	switch event := r.Header.Get("X-Github-Event"); event {
 	case "ping":
 		pingHandle(w, r)
-	case "commit_comment":
 	case "push":
-		commitHandle(repo, w, r)
+		pushHandle(repo, w, r)
 		fmt.Fprintf(w, "Received %s %s event", repo, event)
 	default:
 		fmt.Fprint(w, "Hello!")
