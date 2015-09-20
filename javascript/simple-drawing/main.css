@@ -1,0 +1,111 @@
+body {
+  width: 600px;
+  margin: auto;
+  background-color: #C8C4C4;
+  margin-bottom: 10px;
+}
+
+canvas {
+  margin-top: 20px;
+  background-color: white;
+}
+
+.controls li,
+button {
+  cursor: pointer;
+}
+
+.red {
+  background-color: red;
+}
+.blue {
+  background-color: blue;
+}
+.yellow {
+  background-color: yellow;
+}
+
+.controls {
+  text-align: center;
+  margin-left: 0;
+  padding-left: 0;
+}
+
+.controls ul {
+  width: 100%;
+  list-style-type: none;
+  margin-left: 0;
+  padding-left: 0;
+}
+
+ul li{
+  width: 70px;
+  height: 70px;
+  display: inline-block;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+
+.selected {
+  border: 5px solid #fff;
+  width: 60px;
+  height: 60px;
+}
+
+button {
+  background-color: #68B25B;
+  border: none;
+  border-radius: 5px;
+  color: white;
+  margin: 5px;
+}
+
+#revealColorSelect {
+  padding: 15px 50px;
+}
+
+#colorSelect {
+  clear: both;
+  width: 480px;
+  margin: auto;
+  margin-top: 11px;
+  background-color: white;
+  position: relative;
+  display: none;
+}
+
+#colorSelect:after {
+  content: "";
+  left: 50%;
+  bottom: 100%;
+  position: absolute;
+  border: solid transparent;
+  border-width: 10px;
+  border-bottom-color: white;
+  margin-left: -10px;
+}
+
+#newColor {
+  width: 100px;
+  height: 100px;
+  display: inline-block;
+  background-color: black;
+  margin: auto;
+}
+
+.sliders {
+  display: inline-block;
+  margin-left: 10px;
+}
+.sliders label {
+  display: inline-block;
+  width: 70px;
+  text-align: left;
+}
+
+#addNewColor {
+  padding: 10px;
+  width: 100%;
+  margin: 0;
+  border-radius: 0;
+}
